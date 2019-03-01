@@ -145,7 +145,7 @@
         </div>
         <div class="clearfix"></div>
       </div>
-       <div class="form-group center-block" v-if='false'>
+       <div class="form-group center-block" v-if='acid'>
            <button class="btn btn-success btn-lg"  @click="submitScore">上传评分</button>
        </div>
      <div class="form-group">
@@ -211,6 +211,7 @@
                 author:'',
                 acid:'',
                 posttime:'',
+                channelId:'',
                 uploadUrl:'',
                 summaryColor:'white',
                 layer:'',
@@ -372,9 +373,12 @@
                         comment:this.comment,
                         score:this.score,
                         content:this.content,
+                        channelId:this.channelId,
                         author:this.author
                     }).then(res=>{
-                        console.log(res.data)
+                        if(res.data.code === 200){
+                            alert('评分提交成功')
+                        }
                     })
                 }
             },
@@ -396,6 +400,7 @@
                         if(res.data.code === 200){
                             this.title = res.data.data.title
                             this.author = res.data.data.owner.name
+                            this.channelId = res.data.data.channelId
                             this.posttime = new Date(res.data.data.releaseDate)
                         }
                     })
