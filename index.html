@@ -193,7 +193,8 @@
               <input type="color" id="fontcolor" class="form-control input-sm"  v-model="fontcolor" >
           </div>
         <div class="col-md-4">
-             <button class="btn btn-default"  @click="defaultColor">默认颜色</button>
+             <button class="btn btn-success"  @click="defaultColor">NTR绿</button>
+             <button class="btn btn-danger"  @click="orangeColor">爽文橙</button>
         </div>
         <div class="clearfix"></div>
       </div>
@@ -380,6 +381,12 @@
             defaultColor(){
                 this.startcolor = '#b9e589'
                 this.endcolor = '#294e01'
+                this.fontcolor = '#ffffff'
+                this.colorChange()
+            },
+            orangeColor(){
+                this.startcolor = '#fcdd49'
+                this.endcolor = '#ffa500'
                 this.fontcolor = '#ffffff'
                 this.colorChange()
             },
