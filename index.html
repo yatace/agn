@@ -145,7 +145,7 @@
         </div>
         <div class="clearfix"></div>
       </div>
-       <div class="form-group center-block" v-if='acid'>
+       <div class="form-group center-block" v-if='false'>
            <button class="btn btn-success btn-lg"  @click="submitScore">上传评分</button>
        </div>
      <div class="form-group">
@@ -366,7 +366,7 @@
             },
             submitScore(){
                 if(this.acid){
-                    axios.post('https://acfun.leanapp.cn/agnscore',{
+                    axios.post(`https://acfun.leanapp.cn/agnscore/${this.acid}`,{
                         title:this.title,
                         acid:this.acid,
                         comment:this.comment,
