@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agn生成器</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <script crossorigin="anonymous" integrity="sha384-c8inZyD0O4L/ErSuX3RVWgqsgtiAUw34TeSWiUwbKaXaI2RQg8SKVe80cipDBf0D" src="https://lib.baomitu.com/vue/2.6.7/vue.min.js"></script>
+    <link crossorigin="anonymous" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" href="https://lib.baomitu.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw" src="https://lib.baomitu.com/moment.js/2.24.0/moment.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY" src="https://lib.baomitu.com/axios/0.18.0/axios.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-S2QR8FFC2taQMwIsBKVmvYCBnA1MewmutcASWe7y9srSL5A6PXmZPJ7iq1Np/GqS" src="https://lib.baomitu.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-8CYhPwYlLELodlcQV713V9ZikA3DlCVaXFDpjHfP8Z36gpddf/Vrt47XmKDsCttu" src="https://lib.baomitu.com/clipboard.js/2.0.4/clipboard.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-c9m22wgYuGmVnDbqtDiQ7GJ8H4LzJBB4sUBGVPWyVc6gmku4Z5FwBjphfR6245v6" src="https://lib.baomitu.com/konva/3.1.0/konva.min.js"></script>
+    <style>
+        .container{
+            padding: 15px;
+        }
+        .score {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -77px;
+            z-index: 20;
+            top: 100px;
+        }
+        .scoretxt{
+             font-size: 38px;
+            color: #fff;
+            line-height: 150px;
+            text-align: center;
+             position: relative;
+        }
+        .preview{
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            background: url(./bg.png) top left/cover no-repeat;
+        }
+        .bgg{
+            background-color: #294e01;
+            color: #fff!important;
+            opacity: .85;
+            position: relative;
+        }
+        .bgg .text-overflow{
+            min-height: 170px;
+            padding: 10px 0 0 65px ;
+        }
+        .acid{
+            position: absolute;
+            right: 10px;
+            top: -20px;
+            text-align: right;
+        }
+        .title{
+            margin-left: -20px;
+        }
+        .author{
+            width: 220px;
+            height: 68px;
+            background: url(./avatar.png) top left/cover no-repeat;
+            margin-top: 152px;
+            margin-left: -20px;
+            text-indent: 127px;
+            line-height: 54px;
+        }
+        .hexgon{
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        [v-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app" v-cloak>
+    <div class="h4">AGN 生成器</div>
+    <div class="form-group">
+        <label for="article">文章网址/Ac号</label>
+        <input type="text" id="article" class="form-control input-sm" @blur="getArticle" v-model="article" >
+    </div>
+    <div class="form-group">
+        <label for="title">标题</label>
+        <input type="text" id="title" class="form-control input-sm"  v-model="title" >
+    </div>
+    <div class="form-group">
+        <label for="author">作者</label>
+        <input type="text" id="author" class="form-control input-sm"  v-model="author" >
+    </div>
+    <div class="form-group">
+        <label for="comment">评论员</label>
+        <input type="text" id="comment" class="form-control input-sm"  v-model="comment" >
+    </div>
+    <div class="form-group">
+        <label for="content">内容</label>
+        <textarea id="content" class="form-control input-sm"  v-model="content" rows="7"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="summary">总评</label>
+        <input type="text" id="summary" class="form-control input-sm"  v-model="summary" >
+    </div>
+    <div class="form-group">
+        <label for="score">评分</label>
+        <input type="range" id="score" class="form-control input-sm"  v-model.number="score" max="10" min="0" step="0.1">
+    </div>
+     <div class="form-group">
+        <label for="content">预览
+            <button class="btn btn-sm btn-success" v-if="acid" @click="captureImage">下载</button>
+            <button class="btn btn-sm btn-success" v-if="acid" @click="uploadAndCopy">上传图片</button>
+            {{uploadUrl}}
+            <button class="btn btn-sm btn-success clipboard" :data-clipboard-text="uploadUrl" >复制链接</button>
+
+        </label>
+        <div style="position: relative;overflow: hidden">
+            <div class="preview" >
+                <div class="col-md-6 col-xs-6 col-sm-6" style="position: relative">
+                    <p class="text-overflow h4 title">{{title}}</p>
+                    <div class="text-overflow author">{{author}}</div>
+                    <div class="score">
+                          <div id="canvas" class="hexgon">
+        
+                         </div>
+                         <div class="scoretxt">
+                               {{score.toFixed(1)}}
+                         </div>
+                      
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="col-md-6 col-xs-6 col-sm-6 bgg" :style="{background:bgc}">
+                    <p class="h1" >{{summary}} </p>
+                    <div class="acid" >
+                        <p class="h2">AGN·中国</p>
+                        {{acid}}
+
+                    </div>
+                    <p class="text-overflow" v-html="content.replace(/\n/g,'<br>')"></p>
+                    <p>评论员：{{comment}}  {{moment().format('YYYY年MM月DD日')}}</p>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+        </div>
+
+
+    </div>
+  
+
+</div>
+
+<script>
+    var app = new Vue({
+        el:'#app',
+        data(){
+            return {
+                score:10,
+                title:'',
+                summary:'尚可',
+                content:'',
+                comment:localStorage.getItem('comment')||'yang',
+                article:'',
+                author:'',
+                acid:'',
+                uploadUrl:'',
+                layer:'',
+                hexgon:'',
+                colors:[],
+                bgc:"1"
+            }
+        },
+        created(){
+            var clipboard = new ClipboardJS('.clipboard');
+            clipboard.on('success', function(e) {
+                alert('复制成功')
+                e.clearSelection();
+            });
+            this. getRgb();
+            this.$nextTick(()=>{
+                  var stage = new Konva.Stage({
+              container: 'canvas',   // id of container <div> 
+              width: 150,
+              height: 150
+            });
+
+            // then create layer 
+            this.layer = new Konva.Layer();
+
+            // create our shape 
+            this.hexgon = new Konva.RegularPolygon({
+              x: 75,
+              y: 75,
+              radius: 60,
+              sides: 6,
+              fill: '#294e01',
+              stroke: 'white',
+                shadowColor: 'grey',
+                shadowBlur: 10,
+                shadowOffset: {
+                    x : 0,
+                    y : 0
+                },
+            shadowOpacity: 0.6,
+            strokeWidth: 7
+            });
+
+            // add the shape to the layer 
+            this.layer.add(this.hexgon);
+
+            // add the layer to the stage 
+            stage.add(this.layer);
+            })
+        },
+        watch:{
+            comment(nv){
+                localStorage.setItem("comment",nv)
+            },
+            score(nv){
+                this.hexgon.attrs.fill = this.colors[nv*10]
+                this.layer.draw()
+                console.log(this.colors[nv*10],nv*10)
+                this.bgc = this.colors[nv*10]
+            }
+        },
+        methods:{
+            getRgb(){
+                let end = {r:41,g:78,b:1}
+                let start = {r:185,g:229,b:137}
+                this.colors.push(this.getHex(start));
+                let step = {
+                    r:parseInt((end.r - start.r)/99),g:parseInt((end.g - start.g)/99),b:parseInt((end.b - start.b)/99)
+                }
+                for(var i =1;i<100;i++){
+                    let r = start.r + step.r*i
+                    let g = start.g + step.g*i
+                    let b = start.b + step.b*i
+                    this.colors.push(this.getHex(
+                    {
+                        r,
+                        g,
+                        b
+                    }))
+                }
+                   this.colors.push(this.getHex(end));
+            },
+            getHex(rgb){
+                let hexstr = '#'
+                for(let key in rgb){
+                    let hexval = rgb[key].toString(16)
+                    if(hexval.length === 1){
+                        hexstr += '0'+ hexval
+                    }else{
+                         hexstr += hexval
+                    }
+                }
+                return hexstr
+
+            },
+            captureImage(){
+                html2canvas(document.querySelector('.preview')).then(canvas =>{
+                    let base64Img = canvas.toDataURL("image/png");
+                    let link = document.createElement('a');
+                    link.href = base64Img;
+                    link.download = `${this.acid}.png`;
+                    link.click();
+                })
+            },
+            uploadAndCopy(){
+                html2canvas(document.querySelector('.preview')).then(canvas =>{
+                    canvas.toBlob(blob=> {
+                        const data = new FormData()
+                        data.append('smfile',blob)
+                       axios.post('https://sm.ms/api/upload',data).then(res=>{
+                           this.uploadUrl = res.data.data.url
+                       })
+                    },'image/png');
+                })
+            },
+            getArticle(){
+                let aid = +this.article.replace('http://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
+                if(aid){
+                    axios.get(`https://acfun.leanapp.cn/acfun/contents/${aid}`).then(res=>{
+                        if(res.data.code === 200){
+                            this.title = res.data.data.title
+                            this.author = res.data.data.owner.name
+                        }
+                    })
+                    this.acid = `ac${aid}`
+                }else{
+                    this.acid = ''
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
