@@ -127,15 +127,19 @@
 
     </div>
       <div class="form-group">
-        <div class="col-md-4">
+        <div class="col-md-2">
              <label for="startcolor">0分色</label>
             <input type="color" id="startcolor" class="form-control input-sm"  v-model="startcolor" >
         </div>
        
-        <div class="col-md-4">
+        <div class="col-md-2">
              <label for="endcolor">10分色</label>
              <input type="color" id="endcolor" class="form-control input-sm"  v-model="endcolor" >
         </div>
+          <div class="col-md-2">
+              <label for="fontcolor">文本配色</label>
+              <input type="color" id="fontcolor" class="form-control input-sm"  v-model="fontcolor" >
+          </div>
         <div class="col-md-4">
              <button class="btn btn-default"  @click="defaultColor">默认颜色</button>
         </div>
@@ -165,15 +169,15 @@
                           <div id="canvas" class="hexgon">
         
                          </div>
-                         <div class="scoretxt">
+                         <div class="scoretxt" :style="{color:fontcolor}">
                                {{score.toFixed(1)}}
                          </div>
                       
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-md-6 col-xs-6 col-sm-6 bgg" :style="{background:bgc}">
-                    <p class="h1" >{{summary}} </p>
+                <div class="col-md-6 col-xs-6 col-sm-6 bgg" :style="{background:bgc,color:fontcolor+'!important'}">
+                    <p class="h1" :style="{color:summaryColor,'text-shadow': '0.5px 0.5px #bbb'}">{{summary}} </p>
                     <div class="acid" >
                         <p class="h2">AGN·中国</p>
                         {{acid}}
@@ -200,7 +204,7 @@
             return {
                 score:10,
                 title:'',
-                summary:'尚可',
+                summary:'文豪',
                 content:'',
                 comment:localStorage.getItem('comment')||'yang',
                 article:'',
@@ -208,9 +212,11 @@
                 acid:'',
                 posttime:'',
                 uploadUrl:'',
+                summaryColor:'yellow',
                 layer:'',
                 hexgon:'',
                 startcolor:'#b9e589',
+                fontcolor:'#ffffff',
                 endcolor:'#294e01',
                 colors:[],
                 bgc:"1"
@@ -262,15 +268,42 @@
             },
             score(nv){
                 this.colorChange()
+                this.setSummary()
             },
             startcolor(nv){
                 this.colorChange()
-            }, 
+            },
+            fontcolor(nv){
+                this.hexgon.attrs.stroke = nv
+                this.layer.draw()
+            },
             endcolor(nv){
                 this.colorChange()
             }
         },
         methods:{
+            setSummary(){
+                if(this.score >= 0&& this.score <= 2.9){
+                    this.summary = '拙劣'
+                    this.summaryColor = 'white'
+                }
+                if(this.score >= 3&& this.score <= 5.9){
+                    this.summary = '尚可'
+                    this.summaryColor = 'blue'
+                }
+                if(this.score >= 6&& this.score <= 7.9){
+                    this.summary = '优秀'
+                    this.summaryColor = 'green'
+                }
+                if(this.score >= 8&& this.score <= 9.9){
+                    this.summary = '卓越'
+                    this.summaryColor = 'purple'
+                }
+                if(this.score === 10){
+                    this.summary = '文豪'
+                    this.summaryColor = 'yellow'
+                }
+            },
             defaultColor(){
                 this.startcolor = '#b9e589'
                 this.endcolor = '#294e01'
@@ -286,12 +319,12 @@
                 this.colors = []
                 this.colors.push(this.getHex(start));
                 let step = {
-                    r:parseInt((end.r - start.r)/99),g:parseInt((end.g - start.g)/99),b:parseInt((end.b - start.b)/99)
+                    r:(end.r - start.r)/99,g:(end.g - start.g)/99,b:(end.b - start.b)/99
                 }
                 for(var i =1;i<100;i++){
-                    let r = start.r + step.r*i
-                    let g = start.g + step.g*i
-                    let b = start.b + step.b*i
+                    let r = parseInt(start.r + step.r*i)
+                    let g = parseInt(start.g + step.g*i)
+                    let b = parseInt(start.b + step.b*i)
                     this.colors.push(this.getHex(
                     {
                         r,
