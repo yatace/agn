@@ -87,15 +87,63 @@
             left: 0;
             top: 0;
         }
+        .lemon-preview{
+            background: url("lemon.png") top left/cover no-repeat;
+            width: 700px;
+            height: 359px;
+            margin: 0 auto;
+            display: flex;
+            position: relative;
+        }
+        .lemon-score{
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            line-height: 160px;
+            font-size: 50px;
+            text-align: center;
+            top: 99.5px;
+            left: 275px;
+        }
+        .lemon-preview-left,
+        .lemon-preview-right{
+            flex: 1;
+            padding: 10px;
+        }
+        .lemon-preview-right .h2{
+            margin-left: 50px;
+        }
+        .lemon-preview-right .text-overflow{
+            margin-left: 80px;
+            height: 169px;
+        }
+        .lemon-title{
+            padding: 30px 30px 0;
+        }
+        .lemon-content{
+            text-indent: 2em;
+            width: 258px;
+            height: 188px;
+            overflow: hidden;
+            border: none;
+            color: inherit!important;
+            background: none;
+            padding: 20px;
+            white-space: normal;
+        }
         [v-cloak]{
             display: none;
         }
+
     </style>
 </head>
 <body>
      <a href="https://github.com/yatace/agn" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 <div class="container" id="app" v-cloak>
-    <div class="h4">AGN 生成器</div>
+    <p class="h4">AGN 生成器
+        <button class="btn btn-primary btn-md" @click="lemon=false">AGN模式</button>
+        <button class="btn btn-warning btn-md" @click="lemon=true">酸🍋模式</button>
+    </p>
     <div class="form-group">
         <label for="article">文章网址/Ac号</label>
         <input type="text" id="article" class="form-control input-sm" @blur="getArticle" v-model="article" >
@@ -157,7 +205,7 @@
 
         </label>
         <div style="position: relative;overflow: hidden">
-            <div class="preview" >
+            <div class="preview" v-if="!lemon">
                 <div class="col-md-6 col-xs-6 col-sm-6" style="position: relative">
                     <p class="text-overflow h4 title">{{title}}</p>
                     <div class="text-overflow author">{{author}}
@@ -189,6 +237,22 @@
                 <div class="clearfix"></div>
 
             </div>
+            <div class="lemon-preview" v-if="lemon">
+                <div class="lemon-preview-left" :style="{color:fontcolor}">
+                    <p class="lemon-title h4">{{title}}</p>
+                    <pre class="lemon-content" >{{articleContent}}</pre>
+                    <p class="h2 text-right">酸柠檬新鲜度</p>
+                </div>
+                <div class="lemon-preview-right">
+                    <p class="h3">柠檬酸度：</p>
+                    <p class="h2">{{summary}}</p>
+                    <p class="text-overflow" v-html="content.replace(/\n/g,'<br>')"></p>
+                    <p class="h5">评分机构：{{comment}}</p>
+                </div>
+                <div class="lemon-score">
+                    {{`${score*10}%`}}
+                </div>
+            </div>
         </div>
 
 
@@ -203,8 +267,10 @@
         data(){
             return {
                 score:10,
+                lemon:false,
                 title:'',
                 summary:'文豪',
+                articleContent:'',
                 content:'',
                 comment:localStorage.getItem('comment')||'yang',
                 article:'',
@@ -269,7 +335,9 @@
             },
             score(nv){
                 this.colorChange()
-                this.setSummary()
+                if(!this.lemon){
+                    this.setSummary()
+                }
             },
             startcolor(nv){
                 this.colorChange()
@@ -308,6 +376,7 @@
             defaultColor(){
                 this.startcolor = '#b9e589'
                 this.endcolor = '#294e01'
+                this.fontcolor = '#ffffff'
                 this.colorChange()
             },
             colorChange(){
@@ -357,7 +426,7 @@
 
             },
             captureImage(){
-                html2canvas(document.querySelector('.preview')).then(canvas =>{
+                html2canvas(document.querySelector(this.lemon?'.lemon-preview':'.preview')).then(canvas =>{
                     let base64Img = canvas.toDataURL("image/png");
                     let link = document.createElement('a');
                     link.href = base64Img;
@@ -374,7 +443,8 @@
                         score:this.score,
                         content:this.content,
                         channelId:this.channelId,
-                        author:this.author
+                        author:this.author,
+                        scoreType:this.lemon?'lemon':'agn'
                     }).then(res=>{
                         if(res.data.code === 200){
                             alert('评分提交成功')
@@ -383,7 +453,7 @@
                 }
             },
             uploadAndCopy(){
-                html2canvas(document.querySelector('.preview')).then(canvas =>{
+                html2canvas(document.querySelector(this.lemon?'.lemon-preview':'.preview')).then(canvas =>{
                     canvas.toBlob(blob=> {
                         const data = new FormData()
                         data.append('smfile',blob)
@@ -401,6 +471,9 @@
                             this.title = res.data.data.title
                             this.author = res.data.data.owner.name
                             this.channelId = res.data.data.channelId
+                            var div = document.createElement('div')
+                            div.innerHTML = res.data.data.article.content
+                            this.articleContent = div.innerText
                             this.posttime = new Date(res.data.data.releaseDate)
                         }
                     })
