@@ -44,7 +44,6 @@
             background: url(./bg.png) top left/cover no-repeat;
         }
         .bgg{
-            background-color: #294e01;
             color: #fff!important;
             opacity: .85;
             position: relative;
@@ -129,16 +128,17 @@
             width: 258px;
             height: 188px;
             overflow: hidden;
-            border: none;
-            color: inherit!important;
-            background: none;
             padding: 20px;
             white-space: normal;
         }
         [v-cloak]{
             display: none;
         }
-
+           /*.text-overflow {*/
+            /*overflow: hidden;*/
+            /*text-overflow: ellipsis;*/
+            /*white-space: nowrap;*/
+        /*}*/
     </style>
 </head>
 <body>
@@ -245,7 +245,7 @@
             <div class="lemon-preview" v-if="lemon">
                 <div class="lemon-preview-left" :style="{color:fontcolor}">
                     <p class="lemon-title h4">{{title}}</p>
-                    <pre class="lemon-content" >{{articleContent}}</pre>
+                    <p class="text-overflow lemon-content" v-html="articleContent.replace(/\n/g,'<br>')"></p>
                     <p class="h2 text-right">酸柠檬新鲜度</p>
                 </div>
                 <div class="lemon-preview-right">
@@ -287,11 +287,11 @@
                 summaryColor:'white',
                 layer:'',
                 hexgon:'',
-                startcolor:'#b9e589',
                 fontcolor:'#ffffff',
-                endcolor:'#294e01',
+                endcolor:'#ffa500',
+                startcolor:'#fcdd49',
                 colors:[],
-                bgc:"1"
+                bgc:"#ffa500"
             }
         },
         created(){
@@ -315,7 +315,7 @@
                 y: 75,
                 radius: 60,
                 sides: 6,
-                fill: '#294e01',
+                fill: this.endcolor,
                 stroke: 'white',
                 shadowColor: 'grey',
                 shadowBlur: 10,
