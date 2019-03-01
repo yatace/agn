@@ -71,6 +71,14 @@
             text-indent: 127px;
             line-height: 54px;
         }
+        .posttime{
+            color: #999;
+            line-height: normal;
+               text-indent: 70px;
+               font-size: 12px;
+               height: 12px;
+               margin-top: -10px;
+        }
         .hexgon{
             width: 150px;
             height: 150px;
@@ -104,17 +112,34 @@
         <input type="text" id="comment" class="form-control input-sm"  v-model="comment" >
     </div>
     <div class="form-group">
-        <label for="content">内容</label>
+        <label for="content">内容 <button class="btn btn-sm btn-danger"  @click="content = ''">清空</button></label>
         <textarea id="content" class="form-control input-sm"  v-model="content" rows="7"></textarea>
     </div>
     <div class="form-group">
         <label for="summary">总评</label>
         <input type="text" id="summary" class="form-control input-sm"  v-model="summary" >
     </div>
-    <div class="form-group">
+  
+     <div class="form-group">  
         <label for="score">评分</label>
         <input type="range" id="score" class="form-control input-sm"  v-model.number="score" max="10" min="0" step="0.1">
+
     </div>
+      <div class="form-group">
+        <div class="col-md-4">
+             <label for="startcolor">0分色</label>
+            <input type="color" id="startcolor" class="form-control input-sm"  v-model="startcolor" >
+        </div>
+       
+        <div class="col-md-4">
+             <label for="endcolor">10分色</label>
+             <input type="color" id="endcolor" class="form-control input-sm"  v-model="endcolor" >
+        </div>
+        <div class="col-md-4">
+             <button class="btn btn-default"  @click="defaultColor">默认颜色</button>
+        </div>
+        <div class="clearfix"></div>
+      </div>
      <div class="form-group">
         <label for="content">预览
             <button class="btn btn-sm btn-success" v-if="acid" @click="captureImage">下载</button>
@@ -127,7 +152,11 @@
             <div class="preview" >
                 <div class="col-md-6 col-xs-6 col-sm-6" style="position: relative">
                     <p class="text-overflow h4 title">{{title}}</p>
-                    <div class="text-overflow author">{{author}}</div>
+                    <div class="text-overflow author">{{author}}
+                    <div class="posttime" v-if="posttime">
+                        {{moment(posttime).format('YYYY年MM月DD日 HH:mm:ss')}}
+                    </div>
+                    </div>
                     <div class="score">
                           <div id="canvas" class="hexgon">
         
@@ -173,9 +202,12 @@
                 article:'',
                 author:'',
                 acid:'',
+                posttime:'',
                 uploadUrl:'',
                 layer:'',
                 hexgon:'',
+                startcolor:'#b9e589',
+                endcolor:'#294e01',
                 colors:[],
                 bgc:"1"
             }
@@ -186,33 +218,31 @@
                 alert('复制成功')
                 e.clearSelection();
             });
-            this. getRgb();
+            this.getRgb(this.hexToRgb(this.startcolor),this.hexToRgb(this.endcolor));
             this.$nextTick(()=>{
                   var stage = new Konva.Stage({
               container: 'canvas',   // id of container <div> 
               width: 150,
               height: 150
             });
-
             // then create layer 
             this.layer = new Konva.Layer();
-
             // create our shape 
             this.hexgon = new Konva.RegularPolygon({
-              x: 75,
-              y: 75,
-              radius: 60,
-              sides: 6,
-              fill: '#294e01',
-              stroke: 'white',
+                x: 75,
+                y: 75,
+                radius: 60,
+                sides: 6,
+                fill: '#294e01',
+                stroke: 'white',
                 shadowColor: 'grey',
                 shadowBlur: 10,
                 shadowOffset: {
                     x : 0,
                     y : 0
                 },
-            shadowOpacity: 0.6,
-            strokeWidth: 7
+                shadowOpacity: 0.6,
+                strokeWidth: 7
             });
 
             // add the shape to the layer 
@@ -227,16 +257,29 @@
                 localStorage.setItem("comment",nv)
             },
             score(nv){
-                this.hexgon.attrs.fill = this.colors[nv*10]
-                this.layer.draw()
-                console.log(this.colors[nv*10],nv*10)
-                this.bgc = this.colors[nv*10]
+                this.colorChange()
+            },
+            startcolor(nv){
+                this.colorChange()
+            }, 
+            endcolor(nv){
+                this.colorChange()
             }
         },
         methods:{
-            getRgb(){
-                let end = {r:41,g:78,b:1}
-                let start = {r:185,g:229,b:137}
+            defaultColor(){
+                this.startcolor = '#b9e589'
+                this.endcolor = '#294e01'
+                this.colorChange()
+            },
+            colorChange(){
+                this.getRgb(this.hexToRgb(this.startcolor),this.hexToRgb(this.endcolor));
+                this.hexgon.attrs.fill = this.colors[this.score*10]
+                this.bgc = this.colors[this.score*10]
+                this.layer.draw()
+            },
+            getRgb(start,end){
+                this.colors = []
                 this.colors.push(this.getHex(start));
                 let step = {
                     r:parseInt((end.r - start.r)/99),g:parseInt((end.g - start.g)/99),b:parseInt((end.b - start.b)/99)
@@ -253,6 +296,14 @@
                     }))
                 }
                    this.colors.push(this.getHex(end));
+            },
+            hexToRgb(hexstr){
+                let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexstr);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
             },
             getHex(rgb){
                 let hexstr = '#'
@@ -294,6 +345,7 @@
                         if(res.data.code === 200){
                             this.title = res.data.data.title
                             this.author = res.data.data.owner.name
+                            this.posttime = new Date(res.data.data.releaseDate)
                         }
                     })
                     this.acid = `ac${aid}`
