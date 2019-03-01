@@ -70,6 +70,7 @@
             margin-left: -20px;
             text-indent: 127px;
             line-height: 54px;
+            white-space: nowrap;
         }
         .posttime{
             color: #999;
@@ -140,6 +141,9 @@
         </div>
         <div class="clearfix"></div>
       </div>
+       <div class="form-group center-block" v-if='acid'>
+           <button class="btn btn-success btn-lg"  @click="submitScore">上传评分</button>
+       </div>
      <div class="form-group">
         <label for="content">预览
             <button class="btn btn-sm btn-success" v-if="acid" @click="captureImage">下载</button>
@@ -326,6 +330,20 @@
                     link.download = `${this.acid}.png`;
                     link.click();
                 })
+            },
+            submitScore(){
+                if(this.acid){
+                    axios.post('https://acfun.leanapp.cn/agnscore',{
+                        title:this.title,
+                        acid:this.acid,
+                        comment:this.comment,
+                        score:this.score,
+                        content:this.content,
+                        author:this.author
+                    }).then(res=>{
+                        console.log(res.data)
+                    })
+                }
             },
             uploadAndCopy(){
                 html2canvas(document.querySelector('.preview')).then(canvas =>{
