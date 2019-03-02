@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agn评分查询</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <script crossorigin="anonymous" integrity="sha384-c8inZyD0O4L/ErSuX3RVWgqsgtiAUw34TeSWiUwbKaXaI2RQg8SKVe80cipDBf0D" src="https://lib.baomitu.com/vue/2.6.7/vue.min.js"></script>
+    <link crossorigin="anonymous" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" href="https://lib.baomitu.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw" src="https://lib.baomitu.com/moment.js/2.24.0/moment.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY" src="https://lib.baomitu.com/axios/0.18.0/axios.min.js"></script>
+</head>
+<body>
+<ul class="nav nav-pills">
+    <li role="presentation" ></li>
+    <li role="presentation" ></li>
+</ul>
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">评分查询</a></li>
+                <li><a href="http://www.acfun.cn/">Acfun</a></li>
+                <li><a href="index.html">Agn生成器</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<div class="container" id="app">
+    <form class="">
+        <div class="form-group">
+            <label for="ac">Agn评分查询</label>
+            <input id="ac" type="text" class="form-control" placeholder="ac号/文章网址" v-model="acid">
+        </div>
+        <button  class="btn btn-default" @click="query">搜索</button>
+    </form>
+    <table class="table table-striped" style="margin-top: 40px">
+        <thead>
+            <th>标题</th>
+            <th>评分</th>
+            <th>评论员</th>
+            <th>评语</th>
+            <th>评论内容</th>
+        </thead>
+        <tr v-for="item in list">
+            <td><a :href="`http://www.acfun.cn/a/${item.acid}`">{{item.title}}</a></td>
+            <td>{{item.score}}</td>
+            <td>{{item.comment}}</td>
+            <td>{{item.summary}}</td>
+            <td :title="item.content">查看</td>
+        </tr>
+    </table>
+    <p class="h3 text-center" v-if="averageScore">平均分{{averageScore}}</p>
+</div>
+
+<script>
+    var app = new Vue({
+        el:'#app',
+        data(){
+            return {
+                acid:'',
+                list:[]
+            }
+        },
+        computed:{
+          averageScore(){
+              return this.list.reduce((a,b)=>a+b.score,0)/this.list.length
+          }
+        },
+        methods:{
+            query(e){
+                e.preventDefault();
+                axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`).then(res=>{
+                    if(res.data.code === 200){
+                        this.list = res.data.data
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

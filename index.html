@@ -147,7 +147,15 @@
     <p class="h4">AGN 生成器
         <button class="btn btn-primary btn-md" @click="lemon=false">AGN模式</button>
         <button class="btn btn-warning btn-md" @click="lemon=true">酸🍋模式</button>
+        <a href="search.html">查询评分</a>
     </p>
+    <div class="alert alert-info" role="alert">
+        <p class="h5">2019/03/02更新：</p>
+        <ol>
+            <li>原上传评分取消改为自动上传</li>
+            <li>新增评分<a href="search.html">查询</a></li>
+        </ol>
+    </div>
     <div class="form-group">
         <label for="article">文章网址/Ac号</label>
         <input type="text" id="article" class="form-control input-sm" @blur="getArticle" v-model="article" >
@@ -195,9 +203,6 @@
         </div>
         <div class="clearfix"></div>
       </div>
-       <div class="form-group center-block" v-if='acid'>
-           <button class="btn btn-success btn-lg"  @click="submitScore">上传评分</button>
-       </div>
      <div class="form-group">
         <label for="content">预览
             <button class="btn btn-sm btn-success" v-if="acid" @click="captureImage">下载</button>
@@ -433,6 +438,7 @@
                     link.href = base64Img;
                     link.download = `${this.acid}.png`;
                     link.click();
+                    this.submitScore()
                 })
             },
             submitScore(){
@@ -449,7 +455,7 @@
                         scoreType:this.lemon?'lemon':'agn'
                     }).then(res=>{
                         if(res.data.code === 200){
-                            alert('评分提交成功')
+                            console.log('评分提交成功')
                         }
                     })
                 }
@@ -458,6 +464,7 @@
                 html2canvas(document.querySelector(this.lemon?'.lemon-preview':'.preview')).then(canvas =>{
                     canvas.toBlob(blob=> {
                         const data = new FormData()
+                        this.submitScore()
                         data.append('smfile',blob)
                        axios.post('https://sm.ms/api/upload',data).then(res=>{
                            this.uploadUrl = res.data.data.url
