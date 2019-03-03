@@ -438,8 +438,19 @@
                     link.href = base64Img;
                     link.download = `${this.acid}.png`;
                     link.click();
-                    this.submitScore()
+                    this.throttle(this.submitScore)
                 })
+            },
+            throttle(fn, wait = 3000) {
+                let lastTime = 0 // 初始化上一次调用的事件
+                return function () {
+                    let args = [].slice.call(arguments) // 将类数组转化为数组
+                    let nowTime = new Date().getTime() // 获取当前时间
+                    if(nowTime - lastTime > wait) {
+                        fn.apply(this, args)
+                        lastTime = nowTime // 把上一次调用时间重新赋值
+                    }
+                }
             },
             submitScore(){
                 if(this.acid){
@@ -464,7 +475,7 @@
                 html2canvas(document.querySelector(this.lemon?'.lemon-preview':'.preview')).then(canvas =>{
                     canvas.toBlob(blob=> {
                         const data = new FormData()
-                        this.submitScore()
+                        this.throttle(this.submitScore)
                         data.append('smfile',blob)
                        axios.post('https://sm.ms/api/upload',data).then(res=>{
                            this.uploadUrl = res.data.data.url
