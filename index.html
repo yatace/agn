@@ -65,7 +65,6 @@
             width: 220px;
             height: 68px;
             background: url(./avatar.png) top left/cover no-repeat;
-            margin-top: 152px;
             margin-left: -20px;
             text-indent: 127px;
             line-height: 54px;
@@ -130,15 +129,25 @@
             overflow: hidden;
             padding: 20px;
             white-space: normal;
+            background: transparent;
+            border: none;
+            color: inherit!important;
+        }
+        .article-content{
+            background: transparent;
+            border: none;
+            color: inherit!important;
+            height: 112px;
+            overflow: hidden;
+            white-space: normal;
+            padding-top: 45px;
+            margin-left: -20px;
+            text-indent: 2em;
+            font-size: 12px;
         }
         [v-cloak]{
             display: none;
         }
-           /*.text-overflow {*/
-            /*overflow: hidden;*/
-            /*text-overflow: ellipsis;*/
-            /*white-space: nowrap;*/
-        /*}*/
     </style>
 </head>
 <body>
@@ -214,6 +223,7 @@
             <div class="preview" v-if="!lemon">
                 <div class="col-md-6 col-xs-6 col-sm-6" style="position: relative">
                     <p class="text-overflow h4 title">{{title}}</p>
+                    <pre class="article-content" v-text="articleContent"></pre>
                     <div class="text-overflow author">{{author}}
                     <div class="posttime" v-if="posttime">
                         {{moment(posttime).format('YYYY年MM月DD日 HH:mm:ss')}}
@@ -244,7 +254,7 @@
             <div class="lemon-preview" v-if="lemon">
                 <div class="lemon-preview-left" :style="{color:fontcolor}">
                     <p class="lemon-title h4">{{title}}</p>
-                    <p class="text-overflow lemon-content" v-html="articleContent.replace(/\n/g,'<br>')"></p>
+                    <pre class="lemon-content" v-text="articleContent"></pre>
                     <p class="h2 text-right">酸柠檬新鲜度</p>
                 </div>
                 <div class="lemon-preview-right">
