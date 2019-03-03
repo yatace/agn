@@ -48,7 +48,7 @@
             <th>评论内容</th>
         </thead>
         <tr v-for="item in list">
-            <td><a :href="`http://www.acfun.cn/a/${item.acid}`">{{item.title}}</a></td>
+            <td><a target="_blank" :href="`http://www.acfun.cn/a/${item.acid}`">{{item.title}}</a></td>
             <td>{{item.score}}</td>
             <td>{{item.comment}}</td>
             <td>{{item.summary}}</td>
