@@ -43,19 +43,19 @@
     <table class="table table-striped" style="margin-top: 40px">
         <thead>
             <th>标题</th>
+            <th>原文链接</th>
             <th>评分</th>
             <th>评论员</th>
             <th>评语</th>
             <th>评论内容</th>
-            <th>原文链接</th>
         </thead>
         <tr v-for="item in list">
             <td><a href="javascript:void(0)" @click="getAcid(item.acid)" >{{item.title}}</a></td>
+            <td><a :href="`http://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
             <td>{{item.score}}</td>
             <td><a :href="`http://www.acfun.cn/member/findUser.aspx?userName=${item.comment}`" target="acfun">{{item.comment}}</a></td>
             <td>{{item.summary}}</td>
             <td :title="item.content">查看</td>
-            <td><a :href="`http://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
         </tr>
     </table>
     <p class="h3 text-center" v-if="averageScore">平均分{{averageScore.toFixed(2)}}</p>
