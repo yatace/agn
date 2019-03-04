@@ -38,7 +38,7 @@
             <input id="ac" type="text" class="form-control" placeholder="ac号/文章网址" v-model="acid">
         </div>
         <button  class="btn btn-default" @click="query">搜索</button>
-        <button  class="btn btn-danger" @click="getAcid('')">清空</button>
+        <button  class="btn btn-danger" @click="clearQuery()">清空</button>
     </form>
     <table class="table table-striped" style="margin-top: 40px">
         <thead>
@@ -57,6 +57,12 @@
         </tr>
     </table>
     <p class="h3 text-center" v-if="averageScore">平均分{{averageScore}}</p>
+    <nav aria-label="">
+        <ul class="pager">
+            <li class="previous"><a @click="pagePrev" href="javascript:void(0)"><span aria-hidden="true">&larr;</span>上一页</a></li>
+            <li class="next"><a @click="pageNext" href="javascript:void(0)">下一页<span aria-hidden="true">&rarr;</span></a></li>
+        </ul>
+    </nav>
 </div>
 
 <script>
@@ -66,6 +72,7 @@
             return {
                 acid:'',
                 author:'',
+                page:1,
                 comment:'',
                 list:[]
             }
@@ -79,6 +86,20 @@
           }
         },
         methods:{
+            clearQuery(){
+              this.acid = ''
+              this.page = 1
+            },
+            pageNext(){
+                this.page++
+                this.query()
+            },
+            pagePrev(){
+                if(this.page>0){
+                    this.page--
+                    this.query()
+                }
+            },
             getAcid(acid){
                 this.acid = acid
                 this.query()
@@ -88,7 +109,7 @@
                     e.preventDefault();
                 }
                 axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`+
-                `&author=${this.author}&comment=${this.comment}`).then(res=>{
+                        `&page=${this.page}&author=${this.author}&comment=${this.comment}`).then(res=>{
                     if(res.data.code === 200){
                         this.list = res.data.data
                     }
