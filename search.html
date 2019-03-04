@@ -96,12 +96,13 @@
             },
             pagePrev(){
                 if(this.page>0){
-                    this.page--
+                    --this.page
                     this.query()
                 }
             },
             getAcid(acid){
                 this.acid = acid
+                this.page = 1
                 this.query()
             },
             query(e){
