@@ -58,7 +58,7 @@
             <td><a :href="`http://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
         </tr>
     </table>
-    <p class="h3 text-center" v-if="averageScore">平均分{{averageScore}}</p>
+    <p class="h3 text-center" v-if="averageScore">平均分{{averageScore.toFixed(2)}}</p>
     <nav aria-label="">
         <ul class="pager">
             <li class="previous"><a @click="pagePrev" href="javascript:void(0)"><span aria-hidden="true">&larr;</span>上一页</a></li>
