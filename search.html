@@ -38,6 +38,7 @@
             <input id="ac" type="text" class="form-control" placeholder="ac号/文章网址" v-model="acid">
         </div>
         <button  class="btn btn-default" @click="query">搜索</button>
+        <button  class="btn btn-danger" @click="getAcid('')">清空</button>
     </form>
     <table class="table table-striped" style="margin-top: 40px">
         <thead>
@@ -48,7 +49,7 @@
             <th>评论内容</th>
         </thead>
         <tr v-for="item in list">
-            <td><a target="acfun" :href="`http://www.acfun.cn/a/${item.acid}`">{{item.title}}</a></td>
+            <td><a href="javascript:void(0)" @click="getAcid(item.acid)" >{{item.title}}</a></td>
             <td>{{item.score}}</td>
             <td><a :href="`http://www.acfun.cn/member/findUser.aspx?userName=${item.comment}`" target="acfun">{{item.comment}}</a></td>
             <td>{{item.summary}}</td>
@@ -64,18 +65,30 @@
         data(){
             return {
                 acid:'',
+                author:'',
+                comment:'',
                 list:[]
             }
         },
+        created(){
+            this.query()
+        },
         computed:{
           averageScore(){
-              return this.list.reduce((a,b)=>a+b.score,0)/this.list.length
+              return this.acid?this.list.reduce((a,b)=>a+b.score,0)/this.list.length:0
           }
         },
         methods:{
+            getAcid(acid){
+                this.acid = acid
+                this.query()
+            },
             query(e){
-                e.preventDefault();
-                axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`).then(res=>{
+                if(e){
+                    e.preventDefault();
+                }
+                axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`+
+                `&author=${this.author}&comment=${this.comment}`).then(res=>{
                     if(res.data.code === 200){
                         this.list = res.data.data
                     }
