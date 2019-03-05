@@ -14,6 +14,11 @@
     <link crossorigin="anonymous" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" href="https://lib.baomitu.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <script crossorigin="anonymous" integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw" src="https://lib.baomitu.com/moment.js/2.24.0/moment.min.js"></script>
     <script crossorigin="anonymous" integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY" src="https://lib.baomitu.com/axios/0.18.0/axios.min.js"></script>
+    <style>
+         [v-cloak]{
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <ul class="nav nav-pills">
@@ -31,7 +36,7 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-<div class="container" id="app">
+<div class="container" id="app" v-cloak>
     <form class="">
         <div class="form-group">
             <label for="ac">Agn评分查询</label>
@@ -44,7 +49,7 @@
         <thead>
             <th>标题</th>
             <th>原文链接</th>
-            <th>评分</th>
+            <th><a href="javascript:void(0)" @click="orderByScore">评分</a>{{reverse?'&darr;':'&uarr;'}}</th>
             <th>评论员</th>
             <th>评语</th>
             <th>评论内容</th>
@@ -76,6 +81,8 @@
                 author:'',
                 page:1,
                 comment:'',
+                orderBy:'',
+                reverse:true,
                 list:[]
             }
         },
@@ -88,6 +95,11 @@
           }
         },
         methods:{
+            orderByScore(){
+              this.orderBy = 'score'
+              this.reverse = this.reverse?'':'true'
+              this.query()
+            },
             clearQuery(){
               this.acid = ''
               this.page = 1
@@ -112,7 +124,7 @@
                     e.preventDefault();
                 }
                 axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`+
-                        `&page=${this.page}&author=${this.author}&comment=${this.comment}`).then(res=>{
+                        `&page=${this.page}&author=${this.author}&orderBy=${this.orderBy}&reverse=${this.reverse}&comment=${this.comment}`).then(res=>{
                     if(res.data.code === 200){
                         this.list = res.data.data
                     }
