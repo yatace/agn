@@ -14,6 +14,9 @@
     <link crossorigin="anonymous" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" href="https://lib.baomitu.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <script crossorigin="anonymous" integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw" src="https://lib.baomitu.com/moment.js/2.24.0/moment.min.js"></script>
     <script crossorigin="anonymous" integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY" src="https://lib.baomitu.com/axios/0.18.0/axios.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-S2QR8FFC2taQMwIsBKVmvYCBnA1MewmutcASWe7y9srSL5A6PXmZPJ7iq1Np/GqS" src="https://lib.baomitu.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-8CYhPwYlLELodlcQV713V9ZikA3DlCVaXFDpjHfP8Z36gpddf/Vrt47XmKDsCttu" src="https://lib.baomitu.com/clipboard.js/2.0.4/clipboard.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-c9m22wgYuGmVnDbqtDiQ7GJ8H4LzJBB4sUBGVPWyVc6gmku4Z5FwBjphfR6245v6" src="https://lib.baomitu.com/konva/3.1.0/konva.min.js"></script>
     <style>
         .container{
             padding: 15px;
@@ -82,6 +85,29 @@
             left: 0;
             top: 0;
         }
+        .lemon-preview{
+            background: url("lemon.png") top left/cover no-repeat;
+            width: 700px;
+            height: 359px;
+            margin: 0 auto;
+            display: flex;
+            position: relative;
+        }
+        .lemon-score{
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            line-height: 160px;
+            font-size: 50px;
+            text-align: center;
+            top: 99.5px;
+            left: 275px;
+        }
+        .lemon-preview-left,
+        .lemon-preview-right{
+            flex: 1;
+            padding: 10px;
+        }
         .lemon-preview-left .h2{
             padding-right: 10px;
             margin: 5px 0 0;
@@ -92,6 +118,20 @@
         .lemon-preview-right .text-overflow{
             margin-left: 80px;
             height: 169px;
+        }
+        .lemon-title{
+            padding: 30px 30px 0;
+        }
+        .lemon-content{
+            text-indent: 2em;
+            width: 258px;
+            height: 188px;
+            overflow: hidden;
+            padding: 20px;
+            white-space: normal;
+            background: transparent;
+            border: none;
+            color: inherit!important;
         }
         .article-content{
             background: transparent;
@@ -111,10 +151,6 @@
     </style>
 </head>
 <body>
-<ul class="nav nav-pills">
-    <li role="presentation" ></li>
-    <li role="presentation" ></li>
-</ul>
 <nav class="navbar navbar-inverse navbar-static-top">
     <div class="container">
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
@@ -126,7 +162,7 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-<div class="container" id="app">
+<div class="container" id="app" v-cloak>
     <div v-show="showList" class = "container">
         <form class="">
             <div class="form-group">
@@ -139,22 +175,22 @@
         <table class="table table-striped" style="margin-top: 40px">
             <thead>
             <th>标题</th>
-            <th>评分</th>
+            <th>原文链接</th>
+            <th><a href="javascript:void(0)" @click="orderByScore">评分</a>{{reverse?'&darr;':'&uarr;'}}</th>
             <th>评论员</th>
             <th>评语</th>
             <th>评论内容</th>
-            <th>原文链接</th>
             </thead>
             <tr v-for="item in list">
-                <td><a href="javascript:void(0)" @click="getAcid(item.acid)" >{{item.title}}</a></td>
+            <td><a href="javascript:void(0)" @click="getAcid(item.acid)" >{{item.title}}</a></td>
+            <td><a :href="`http://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
                 <td>{{item.score}}</td>
                 <td><a :href="`http://www.acfun.cn/member/findUser.aspx?userName=${item.comment}`" target="acfun">{{item.comment}}</a></td>
                 <td>{{item.summary}}</td>
                 <td><a href="javascript:void(0)" @click="view(item.acid,item.score,item.comment,item.summary,item.content)" >查看</a></td>
-                <td><a :href="`http://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
             </tr>
         </table>
-        <p class="h3 text-center" v-if="averageScore">平均分{{averageScore}}</p>
+        <p class="h3 text-center" v-if="averageScore">平均分{{averageScore.toFixed(2)}}</p>
         <nav aria-label="">
             <ul class="pager">
                 <li class="previous"><a @click="pagePrev" href="javascript:void(0)"><span aria-hidden="true">&larr;</span>上一页</a></li>
@@ -210,6 +246,8 @@
                 author:'',
                 page:1,
                 comment:'',
+				orderBy:'',
+                reverse:true,
                 list:[],
                 showList: true,
 
@@ -230,10 +268,53 @@
                 endcolor:'#ffa500',
                 startcolor:'#fcdd49',
                 colors:[],
-                bgc:"#ffa500"
+                bgc:"#ffa500",
+                releaseDate:''
             }
         },
         created(){
+            var clipboard = new ClipboardJS('.clipboard');
+            clipboard.on('success', function(e) {
+                alert('复制成功')
+                e.clearSelection();
+            });
+            this.getRgb(this.hexToRgb(this.startcolor),this.hexToRgb(this.endcolor));
+            this.$nextTick(()=>{
+                var stage = new Konva.Stage({
+                    container: 'canvas',   // id of container <div>
+                    width: 150,
+                    height: 150
+                });
+            // then create layer
+            this.layer = new Konva.Layer();
+            // create our shape
+            this.hexgon = new Konva.RegularPolygon({
+                x: 75,
+                y: 75,
+                radius: 60,
+                sides: 6,
+                fill: this.endcolor,
+                stroke: 'white',
+                shadowColor: 'grey',
+                shadowBlur: 10,
+                shadowOffset: {
+                    x : 0,
+                    y : 0
+                },
+                shadowOpacity: 0.6,
+                strokeWidth: 7
+            });
+
+            // add the shape to the layer
+            this.layer.add(this.hexgon);
+
+            // add the layer to the stage
+            stage.add(this.layer);
+        })
+            var query = new URLSearchParams(location.search)
+            if(query.get('acid')){
+                this.acid = query.get('acid')
+            }
             this.query()
         },
         computed:{
@@ -256,7 +337,7 @@
 
                 let aid = +acid.replace('http://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
                 if(aid){
-                    axios.get(`https://acfun.leanapp.cn/acfun/contents/${aid}`).then(res=>{
+                    axios.get(`https://api.novel.xuwendiao.com/acfun/contents/${aid}`).then(res=>{
                         if(res.data.code === 200){
                         this.title = res.data.data.title
                         this.author = res.data.data.owner.name
@@ -264,10 +345,16 @@
                         var div = document.createElement('div')
                         div.innerHTML = res.data.data.article.content
                         this.articleContent = div.innerText
+                        this.releaseDate = res.data.data.releaseDate
                         this.posttime = new Date(res.data.data.releaseDate)
                     }
-                })
+                    })
                 }
+            },
+			orderByScore(){
+              this.orderBy = 'score'
+              this.reverse = this.reverse?'':'true'
+              this.query()
             },
             clearQuery(){
               this.acid = ''
@@ -278,7 +365,7 @@
                 this.query()
             },
             pagePrev(){
-                if(this.page>0){
+                if(this.page>1){
                     --this.page
                     this.query()
                 }
@@ -293,11 +380,51 @@
                     e.preventDefault();
                 }
                 axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`+
-                        `&page=${this.page}&author=${this.author}&comment=${this.comment}`).then(res=>{
+                        `&page=${this.page}&author=${this.author}&orderBy=${this.orderBy}&reverse=${this.reverse}&comment=${this.comment}`).then(res=>{
                     if(res.data.code === 200){
                         this.list = res.data.data
                     }
                 })
+            },
+            getRgb(start,end){
+                this.colors = []
+                this.colors.push(this.getHex(start));
+                let step = {
+                    r:(end.r - start.r)/99,g:(end.g - start.g)/99,b:(end.b - start.b)/99
+                }
+                for(var i =1;i<100;i++){
+                    let r = parseInt(start.r + step.r*i)
+                    let g = parseInt(start.g + step.g*i)
+                    let b = parseInt(start.b + step.b*i)
+                    this.colors.push(this.getHex(
+                        {
+                            r,
+                            g,
+                            b
+                        }))
+                }
+                this.colors.push(this.getHex(end));
+            },
+            hexToRgb(hexstr){
+                let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexstr);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            },
+            getHex(rgb){
+                let hexstr = '#'
+                for(let key in rgb){
+                    let hexval = rgb[key].toString(16)
+                    if(hexval.length === 1){
+                        hexstr += '0'+ hexval
+                    }else{
+                        hexstr += hexval
+                    }
+                }
+                return hexstr
+
             }
         }
     })

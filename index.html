@@ -159,9 +159,9 @@
         <a href="search.html">查询评分</a>
     </p>
     <div class="alert alert-info" role="alert">
-        <p class="h5">2019/03/04更新：</p>
+        <p class="h5">2019/03/05更新：</p>
         <ol>
-            <li>评分<a href="search.html">查询</a>优化</li>
+            <li>白嫖了个域名 <a href="http://agnchina.gq/" >http://agnchina.gq/</a></li>
         </ol>
     </div>
     <div class="form-group">
@@ -287,6 +287,7 @@
                 acid:'',
                 posttime:'',
                 channelId:'',
+                releaseDate:'',
                 uploadUrl:'',
                 summaryColor:'white',
                 layer:'',
@@ -461,6 +462,7 @@
                         content:this.content,
                         summary:this.summary,
                         channelId:this.channelId,
+                        releaseDate:this.releaseDate,
                         author:this.author,
                         scoreType:this.lemon?'lemon':'agn'
                     }).then(res=>{
@@ -485,7 +487,7 @@
             getArticle(){
                 let aid = +this.article.replace('http://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
                 if(aid){
-                    axios.get(`https://acfun.leanapp.cn/acfun/contents/${aid}`).then(res=>{
+                    axios.get(`https://api.novel.xuwendiao.com/acfun/contents/${aid}`).then(res=>{
                         if(res.data.code === 200){
                             this.title = res.data.data.title
                             this.author = res.data.data.owner.name
@@ -493,6 +495,7 @@
                             var div = document.createElement('div')
                             div.innerHTML = res.data.data.article.content
                             this.articleContent = div.innerText
+                            this.releaseDate = res.data.data.releaseDate
                             this.posttime = new Date(res.data.data.releaseDate)
                         }
                     })
