@@ -83,6 +83,10 @@
             }
         },
         created(){
+            var query = new URLSearchParams(location.search)
+            if(query.get('acid')){
+                this.acid = query.get('acid')
+            }
             this.query()
         },
         computed:{
