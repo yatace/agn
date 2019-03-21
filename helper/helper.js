@@ -1,12 +1,13 @@
 // ==UserScript==
-// @name         Acfun文章区助手
+// @name         Acfun助手
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Acfun文章区助手 抽奖 AGN评分
+// @version      1.1
+// @description  Acfun助手 评论抽奖
 // @author       styang
 // @require      https://cdn.bootcss.com/clipboard.js/1.5.16/clipboard.min.js
 // @require      https://cdn.bootcss.com/axios/0.18.0/axios.min.js
 // @match        http://www.acfun.cn/a/*
+// @match        http://www.acfun.cn/v/*
 // @grant        none
 // ==/UserScript==
 
