@@ -42,7 +42,7 @@
         let user = comments.find(e=>e.floor === floornumber)
         if(user&&!uids.has(user.userId)&&!user.isUp){
             console.log(`第${luckcount}位天选之子【${ user.userName}】`)
-            if($('.edui-body-container').text().indexOf('评论5字起') === 0){
+            if($('.edui-body-container').text().indexOf('评论5字起') >= 0){
                 $('.edui-body-container').empty()
             }
             $('.edui-body-container').append(`<p>第${luckcount}位天选之子${floornumber}楼的 @${user.userName}</p>`)
