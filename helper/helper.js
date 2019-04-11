@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Acfun助手
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  Acfun助手 评论抽奖
 // @author       styang
 // @require      https://cdn.bootcss.com/axios/0.18.0/axios.min.js
@@ -13,7 +13,8 @@
 (function() {
     'use strict';
     var $ = window.$;
-    var AID = location.href.replace('http://www.acfun.cn/a/ac','').split('#')[0]
+    var AID = location.href.replace('http://www.acfun.cn/a/ac','').replace('http://www.acfun.cn/v/ac','').split('#')[0]
+    var video = location.href.includes("/v/")
     var baseUrl = 'http://www.acfun.cn/rest/pc-direct/comment/listByFloor?sourceId=AID&sourceType=1&page=PAGE&pivotCommentId=0'.replace('AID',AID)
     var getComments = function(page){
         return axios.get(baseUrl.replace('PAGE',page))
@@ -55,7 +56,7 @@
     $(function(){
         getComments(1).then(res =>{
             const data = res.data
-            if(data.isUp){
+            if(true){
                 console.log('确认为up主，载入抽奖助手...')
                 total = data.totalCount
                 totalPage = data.totalPage
@@ -92,10 +93,15 @@
                     'margin-left':'5px',
                     'color':'#fff'
                 };
+                if(video){
+                    buttonCss.margin = '20px 5px'
+                }
                 jqButton.css(buttonCss);
                 jqButton.attr('onclick',"lottery()");
                 jqButton.text('开始抽奖');
                 $('#art-operate').append(button.outerHTML);
+                $('.banana').after(button.outerHTML);
+
             }
         })
     })
