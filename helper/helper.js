@@ -56,7 +56,7 @@
     $(function(){
         getComments(1).then(res =>{
             const data = res.data
-            if(true){
+            if(data.isUp){
                 console.log('确认为up主，载入抽奖助手...')
                 total = data.totalCount
                 totalPage = data.totalPage
