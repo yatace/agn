@@ -1,21 +1,21 @@
 // ==UserScript==
 // @name         Acfun助手
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @description  Acfun助手 评论抽奖
 // @author       styang
 // @require      https://cdn.bootcss.com/axios/0.18.0/axios.min.js
-// @match        http://www.acfun.cn/a/*
-// @match        http://www.acfun.cn/v/*
+// @match        https://www.acfun.cn/a/*
+// @match        https://www.acfun.cn/v/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
     var $ = window.$;
-    var AID = location.href.replace('http://www.acfun.cn/a/ac','').replace('http://www.acfun.cn/v/ac','').split('#')[0]
+    var AID = location.href.replace('https://www.acfun.cn/a/ac','').replace('https://www.acfun.cn/v/ac','').split('#')[0]
     var video = location.href.includes("/v/")
-    var baseUrl = 'http://www.acfun.cn/rest/pc-direct/comment/listByFloor?sourceId=AID&sourceType=1&page=PAGE&pivotCommentId=0'.replace('AID',AID)
+    var baseUrl = 'https://www.acfun.cn/rest/pc-direct/comment/listByFloor?sourceId=AID&sourceType=1&page=PAGE&pivotCommentId=0'.replace('AID',AID)
     var getComments = function(page){
         return axios.get(baseUrl.replace('PAGE',page))
     }
@@ -90,7 +90,7 @@
                     'background':'#fd4c5b',
                     'display':'inline-block',
                     'cursor':'pointer',
-                    'margin-left':'5px',
+                    'margin-left':'20px',
                     'color':'#fff'
                 };
                 if(video){
@@ -100,8 +100,6 @@
                 jqButton.attr('onclick',"lottery()");
                 jqButton.text('开始抽奖');
                 $('#art-operate').append(button.outerHTML);
-                $('.banana').after(button.outerHTML);
-
             }
         })
     })
