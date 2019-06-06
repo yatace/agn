@@ -156,7 +156,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">评分查询</a></li>
-                <li><a target="acfun" href="http://www.acfun.cn/">Acfun</a></li>
+                <li><a target="acfun" href="https://www.acfun.cn/">Acfun</a></li>
                 <li><a target="acfun" href="index.html">Agn生成器</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
@@ -183,9 +183,9 @@
             </thead>
             <tr v-for="item in list">
             <td><a href="javascript:void(0)" @click="getAcid(item.acid)" >{{item.title}}</a></td>
-            <td><a :href="`http://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
+            <td><a :href="`https://www.acfun.cn/a/${item.acid}`" target="acfun">跳转</a></td>
                 <td>{{item.score}}</td>
-                <td><a :href="`http://www.acfun.cn/member/findUser.aspx?userName=${item.comment}`" target="acfun">{{item.comment}}</a></td>
+                <td><a :href="`https://www.acfun.cn/member/findUser.aspx?userName=${item.comment}`" target="acfun">{{item.comment}}</a></td>
                 <td>{{item.summary}}</td>
                 <td><a href="javascript:void(0)" @click="view(item.acid,item.score,item.comment,item.summary,item.content)" >查看</a></td>
             </tr>
@@ -335,7 +335,7 @@
                 this.articleContent = content
                 this.content = content
 
-                let aid = +acid.replace('http://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
+                let aid = +acid.replace('https://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
                 if(aid){
                     axios.get(`https://api.novel.xuwendiao.com/acfun/contents/${aid}`).then(res=>{
                         if(res.data.code === 200){
@@ -379,7 +379,7 @@
                 if(e){
                     e.preventDefault();
                 }
-                axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('http://www.acfun.cn/a/',"")}`+
+                axios.get(`https://acfun.leanapp.cn/agnscore?acid=${this.acid.replace('https://www.acfun.cn/a/',"")}`+
                         `&page=${this.page}&author=${this.author}&orderBy=${this.orderBy}&reverse=${this.reverse}&comment=${this.comment}`).then(res=>{
                     if(res.data.code === 200){
                         this.list = res.data.data

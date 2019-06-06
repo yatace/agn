@@ -159,9 +159,10 @@
         <a href="search.html">查询评分</a>
     </p>
     <div class="alert alert-info" role="alert">
-        <p class="h5">2019/04/11更新：</p>
+        <p class="h5">2019/06/06更新：</p>
         <ol>
-            <li>抽奖脚本新增视频投稿抽奖 <a href="https://greasyfork.org/zh-CN/scripts/375741" >→Acfun助手←</a></li>
+            <li>脚本替换为https</li>
+            <li>抽奖脚本https支持 <a href="https://greasyfork.org/zh-CN/scripts/375741" >→Acfun助手←</a></li>
             <li>源代码见 <a href="helper/helper.js" >→源码←</a></li>
         </ol>
     </div>
@@ -486,7 +487,7 @@
                 })
             },
             getArticle(){
-                let aid = +this.article.replace('http://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
+                let aid = +this.article.replace('https://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
                 if(aid){
                     axios.get(`https://api.novel.xuwendiao.com/acfun/contents/${aid}`).then(res=>{
                         if(res.data.code === 200){
