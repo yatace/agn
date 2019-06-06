@@ -100,6 +100,9 @@
                 jqButton.attr('onclick',"lottery()");
                 jqButton.text('开始抽奖');
                 $('#art-operate').append(button.outerHTML);
+                if(video){
+                    $('.banana').after(button.outerHTML);
+                }
             }
         })
     })
