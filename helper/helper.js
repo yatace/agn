@@ -6,8 +6,8 @@
 // @author       styang
 // @require      https://lib.baomitu.com/axios/0.19.0/axios.min.js
 // @require      https://lib.baomitu.com/jquery/3.4.1/jquery.min.js
-// @match        https://www.acfun.cn/a/*
-// @match        https://www.acfun.cn/v/*
+// @match        https://www.acfun.cn/a/ac*
+// @match        https://www.acfun.cn/v/ac*
 // @grant        none
 // ==/UserScript==
 
