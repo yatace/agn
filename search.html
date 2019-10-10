@@ -187,14 +187,14 @@
                 <td>{{item.score}}</td>
                 <td><a :href="`https://www.acfun.cn/member/findUser.aspx?userName=${item.comment}`" target="acfun">{{item.comment}}</a></td>
                 <td>{{item.summary}}</td>
-                <td><a href="javascript:void(0)" @click="view(item.acid,item.score,item.comment,item.summary,item.content)" >查看</a></td>
+                <td><a href="javascript:void(0)" @click="view(item)" >查看</a></td>
             </tr>
         </table>
         <p class="h3 text-center" v-if="averageScore">平均分{{averageScore.toFixed(2)}}</p>
         <nav aria-label="">
             <ul class="pager">
-                <li class="previous"><a @click="pagePrev" href="javascript:void(0)"><span aria-hidden="true">&larr;</span>上一页</a></li>
-                <li class="next"><a @click="pageNext" href="javascript:void(0)">下一页<span aria-hidden="true">&rarr;</span></a></li>
+                <li class="previous"><a v-if="page>1" @click="pagePrev" href="javascript:void(0)"><span aria-hidden="true">&larr;</span>上一页</a></li>
+                <li class="next"><a v-if="list.length==20" @click="pageNext" href="javascript:void(0)">下一页<span aria-hidden="true">&rarr;</span></a></li>
             </ul>
         </nav>
     </div>
@@ -225,7 +225,7 @@
 
                 </div>
                 <p class="text-overflow" v-html="content.replace(/\n/g,'<br>')"></p>
-                <p>评论员：{{comment}}  {{moment().format('YYYY年MM月DD日')}}</p>
+                <p>评论员：{{comment}}  {{moment(commentDate).format('YYYY年MM月DD日')}}</p>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -250,7 +250,7 @@
                 reverse:true,
                 list:[],
                 showList: true,
-
+                commentDate:'',
                 score:10,
                 lemon:false,
                 title:'',
@@ -327,14 +327,15 @@
                 this.showList = true
                 this.page = 1
             },
-            view(acid,score,comment,summary,content){
+            view(item){
                 this.showList = false
-                this.score = score
-                this.comment = comment
-                this.summary = summary
-                this.articleContent = content
-                this.content = content
-
+                this.score = item.score
+                this.comment = item.comment
+                this.summary = item.summary
+                this.articleContent = item.content
+                this.content = item.content
+                this.commentDate = item.createdAt
+                const acid = item.acid
                 let aid = +acid.replace('https://www.acfun.cn/a/ac','').replace("ac","").replace("\/","").trim()
                 if(aid){
                     axios.get(`https://api.novel.xuwendiao.com/acfun/contents/${aid}`).then(res=>{

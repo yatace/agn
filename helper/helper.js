@@ -107,4 +107,20 @@
             }
         })
     })
+    setTimeOut(()=>{
+        var observer = new MutationObserver(function (mutationsList) {
+        var articleset = new Set()
+        document.querySelectorAll('.article-item').forEach(e => {
+              if(!articleset.has(e.dataset.id)){
+                articleset.add(e.dataset.id)
+              } else{
+                e.style.display = 'none'
+                e.nextElementSibling.style.display = 'none'
+              }    
+            })
+        });
+        observer.observe(document.querySelector(".article-list"),{
+            childList:true
+        })
+    },1500)    
 })();
