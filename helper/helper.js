@@ -68,7 +68,7 @@
                 totalPage = data.totalPage
                 for(var key in data.commentsMap){
                     var comment = data.commentsMap[key]
-                    if(!users.has(comment.userId) || !comment.isUp){
+                    if(!users.has(comment.userId) && !comment.isUp){
                         users.add(comment.userId)
                         comments.push(comment)
                     }else {
@@ -79,7 +79,7 @@
                     getComments(page).then(pageres => {
                         for(var key in pageres.data.commentsMap){
                             var comment = pageres.data.commentsMap[key]
-                            if(!users.has(comment.userId) || !comment.isUp){
+                            if(!users.has(comment.userId) && !comment.isUp){
                                 users.add(comment.userId)
                                 comments.push(comment)
                             }else {
