@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Acfun助手
 // @namespace    http://tampermonkey.net/
-// @version      1.4.1
+// @version      1.4.2
 // @description  Acfun助手 评论抽奖
 // @author       styang
 // @require      https://lib.baomitu.com/axios/0.19.0/axios.min.js
@@ -30,19 +30,24 @@
     var excludeFloor = new Set()
     var ram = function(){
         var val = Math.ceil(Math.random()*total);
-        if(results.indexOf(val)<0&&!excludeFloor.has(val)){
+        if(results.indexOf(val)<0 && !excludeFloor.has(val)){
             results.push(val);
             return val
+        }else if(results.length === users.size){
+
         }else{
             ram();
         }
     };
     var luckcount = 1
     window.lottery = function(){
+        if( luckcount === users.size ){
+            return false
+        }
         let floornumber = ram()
         console.log(`抽取第${luckcount}位天选之子${floornumber}`)
         let user = comments.find(e=>e.floor === floornumber)
-        if(user&&!uids.has(user.userId)&&!user.isUp){
+        if( user && !uids.has(user.userId) && !user.isUp ){
             console.log(`第${luckcount}位天选之子【${ user.userName}】`)
             if($('.edui-body-container').text().indexOf('评论5字起') >= 0){
                 $('.edui-body-container').empty()
@@ -50,7 +55,7 @@
             $('.edui-body-container').append(`<p>第${luckcount}位天选之子${floornumber}楼的 @${user.userName}</p>`)
             luckcount++
             uids.add(user.userId)
-        }else{
+        } else if(results.length !== users.size){
             window.lottery()
         }
     }
@@ -63,7 +68,7 @@
                 totalPage = data.totalPage
                 for(var key in data.commentsMap){
                     var comment = data.commentsMap[key]
-                    if(!users.has(comment.userId)){
+                    if(!users.has(comment.userId) || !users.isUp){
                         users.add(comment.userId)
                         comments.push(comment)
                     }else {
@@ -74,7 +79,7 @@
                     getComments(page).then(pageres => {
                         for(var key in pageres.data.commentsMap){
                             var comment = pageres.data.commentsMap[key]
-                            if(!users.has(comment.userId)){
+                            if(!users.has(comment.userId) || !users.isUp){
                                 users.add(comment.userId)
                                 comments.push(comment)
                             }else {
@@ -107,7 +112,8 @@
             }
         })
     })
-    setTimeOut(()=>{
+    if(document.querySelector(".article-list")){
+         setTimeOut(()=>{
         var observer = new MutationObserver(function (mutationsList) {
         var articleset = new Set()
         document.querySelectorAll('.article-item').forEach(e => {
@@ -116,11 +122,11 @@
               } else{
                 e.style.display = 'none'
                 e.nextElementSibling.style.display = 'none'
-              }    
+              }
             })
         });
         observer.observe(document.querySelector(".article-list"),{
             childList:true
         })
-    },1500)    
+    },1500)    }
 })();
