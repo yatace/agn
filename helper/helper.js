@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Acfun助手
 // @namespace    http://tampermonkey.net/
-// @version      1.4.3
+// @version      1.4.4
 // @description  Acfun助手 2020/04/13 更新 抽奖按钮样式 清除默认评论文字
 // @author       styang
 // @require      https://lib.baomitu.com/axios/0.19.0/axios.min.js
