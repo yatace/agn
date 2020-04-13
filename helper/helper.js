@@ -74,7 +74,7 @@ $(function(){
                 'display':'inline-block',
                 'cursor':'pointer',
                 'margin-left':'20px',
-                'height': 'inherit',
+                'height': 'auto',
                 'color':'#fff'
             };
             if(video){
