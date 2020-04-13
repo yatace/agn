@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Acfun助手
 // @namespace    http://tampermonkey.net/
-// @version      1.4.2
-// @description  Acfun助手 评论抽奖
+// @version      1.4.3
+// @description  Acfun助手 2020/04/13 更新 抽奖按钮样式 清除默认评论文字
 // @author       styang
 // @require      https://lib.baomitu.com/axios/0.19.0/axios.min.js
 // @require      https://lib.baomitu.com/jquery/3.4.1/jquery.min.js
@@ -33,7 +33,7 @@
         let user = comments[commentsindex]
         comments.splice(commentsindex,1)
         console.log(`第${luckcount}位天选之子【${ user.userName}】`)
-        if($('.edui-body-container').text().indexOf('评论5字起') >= 0){
+        if($('.edui-body-container').text().indexOf('评论一时爽') >= 0){
             $('.edui-body-container').empty()
         }
         $('.edui-body-container').append(`<p>第${luckcount}位天选之子${user.floor}楼的 @${user.userName}</p>`)
@@ -74,6 +74,7 @@ $(function(){
                 'display':'inline-block',
                 'cursor':'pointer',
                 'margin-left':'20px',
+                'height': 'inherit',
                 'color':'#fff'
             };
             if(video){
